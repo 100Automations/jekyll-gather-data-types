@@ -18,7 +18,9 @@ def gatherMissingTypes(missingSet, nestedKeyDict, dictionary, prefix, k, v):
         for key in prefixList:
             dataTypeDictionary = dataTypeDictionary[key]
         expectedSet = set(dataTypeDictionary.keys())
-        missingSet.update((expectedSet - currentSet))
+        currentSet = expectedSet - currentSet
+        for key in currentSet:
+            missingSet.add(prefix + k + ": " + key)
 
 def gatherDictionaryKeys(keySet, missingSet, nestedKeyDict, dictionary, prefix):
     for k,v in dictionary.items():

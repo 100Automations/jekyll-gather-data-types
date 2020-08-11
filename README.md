@@ -1,7 +1,21 @@
 # Gather Missing Data Types
 
 ## Description
-TODO
+This project was started to automate a way to identify missing data on projact cards for the HackForLA website. The data on these project cards are stored in .md files as collections using YAML syntax.
+
+The `InitDataType.py` script iterates through all .md files in a target directory and creates a set of all data types used accross directory. This set is then used by `GatherMissingDataTypes.py` to generate a spreadsheet with unused and missing data types for each file.
+
+The spreadsheet generated will have two sheets, one to track unused data types and the other to track missing data types. A data type is considered to be unused if that data type is not present at all in that .md file. A data type is considered to be missing if one or more nested data types is not present in the .md file while the root data type is present.
+
+Note: Nested data types are represented by comma seperated entries
+For example `one,two,three` would represent
+```
+one:
+    two:
+        three: value
+```
+
+![Spreadsheet](./images/spreadsheet.png)
 
 ### Requirements
 You need Python 2.x or 3.x to run the script
