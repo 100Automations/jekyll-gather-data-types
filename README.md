@@ -21,12 +21,13 @@ one:
 You need Python 2.x or 3.x to run the script
 
 You will also need the OpenPyXL library installed.
-##### With `pip`
+##### Install OpenPyXL With `pip`
 `pip install openpyxl`
 or 
 `pip3 install openpyxl`
 
 You will also need the PyYAML library installed.
+##### Install PyYAML With `pip`
 `pip install pyyaml`
 or 
 `pip3 install pyyaml`
