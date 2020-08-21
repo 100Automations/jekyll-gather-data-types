@@ -63,6 +63,35 @@ class ProcessDictionary:
                         current_dictionary = current_dictionary[item]
         return nested_dictionary
     
+    def gather_missing_types(self, missin_set, nested_key_dict, dictionary, prefix, k, v):
+        prefix_list = (prefix + k).split(",")
+        if(nested_key_dict[prefix_list[0]]):
+            current_set = set(dictionary.keys())
+            expected_set = set()
+            data_type_dictionary = dict(nested_key_dict)
+            for key in prefix_list:
+                data_type_dictionary = data_type_dictionary[key]
+            expected_set = set(data_type_dictionary.keys())
+            current_set = expected_set - current_set
+            for key in current_set:
+                missing_set.add(prefix + k + ": " + key)
+
+    def gather_dictionary_keys(self, key_set, missing_set, nested_key_dict, dictionary, prefix):
+        for k,v in dictionary.items():
+            if(prefix):
+                key_set.add(prefix + "," + k)
+            else:
+                key_set.add(k)
+
+            if type(v) is dict:
+                gather_dictionary_keys(key_set, missing_set, nested_key_dict, v, prefix + "," + k if prefix else k)
+            
+            if type(v) is list:
+                for item in v:
+                    if type(item) is dict:
+                        gather_missing_types(missing_set, nested_key_dict, item, prefix, k, v)
+                        gather_dictionary_keys(key_set, missing_set, nested_key_dict, item, prefix + "," + k if prefix else k)
+    
     def get_key_set(self):
         return self.__key_set.copy()
     
