@@ -37,11 +37,11 @@ class ProcessCollection:
         self.__nested_dictionary = pd.generate_nested_dictionary()
     
     def export_marshal_data(self, file_path = "./dataTypes.marshal"):
-        storageFile = open(file_path, 'wb')
-        marshal.dump(DIR_PATH, storageFile)
-        marshal.dump(usedDataTypes, storageFile)
-        marshal.dump(nestedDictionary, storageFile)
-        storageFile.close()
+        storage_file = open(file_path, 'wb')
+        marshal.dump(self.__directory_path, storage_file)
+        marshal.dump(self.__used_data_types, storage_file)
+        marshal.dump(self.__nested_dictionary, storage_file)
+        storage_file.close()
     
     def set_directory_path(self, directory_path):
         self.__directory_path = directory_path
