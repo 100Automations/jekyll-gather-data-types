@@ -76,12 +76,11 @@ class ProcessCollection:
             if pd.get_missing_key_set():
                 self.__data_types_JSON['missing_data_types'][os.path.splitext(filename)[0]] = list(pd.get_missing_key_set())
             if self.__used_data_types:
-                self.__data_types_JSON['used_data_types'][os.path.splitext(filename)[0]] = list(self.__used_data_types)
+                self.__data_types_JSON['used_data_types'] = list(self.__used_data_types)
 
             md_file.close()
         
-        #return json.dumps(self.__data_types_JSON)
-        return self.__data_types_JSON
+        return json.dumps(self.__data_types_JSON)
 
     def export_marshal_data(self, file_path = "./dataTypes.marshal"):
         storage_file = open(file_path, 'wb')
