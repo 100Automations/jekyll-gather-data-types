@@ -52,21 +52,25 @@ class ProcessDictionary:
             with empty dictionaries as the final values.
         """
         nested_dictionary = dict()
+        
         for key in self.__key_set:
             if "," in key :
                 key_list = key.split(",")
                 # current_dictionary is used to traverse nested_dictionary
                 current_dictionary = nested_dictionary
+
                 for item in key_list:
                     if item in current_dictionary.keys():
                         current_dictionary = current_dictionary[item]
                     else:
                         current_dictionary[item] = dict()
                         current_dictionary = current_dictionary[item]
+
         return nested_dictionary
     
     def __gather_missing_keys(self, dictionary, prefix, k, v):
         prefix_list = (prefix + k).split(",")
+
         if(self.__nested_key_dict[prefix_list[0]]):
             current_set = set(dictionary.keys())
             expected_set = set()
