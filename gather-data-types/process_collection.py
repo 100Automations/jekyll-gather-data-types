@@ -5,8 +5,8 @@ import json
 from process_dictionary import ProcessDictionary
 
 class ProcessCollection:
-    def __init__(self, directory_path):
-        if directory_path.endswith('/') == False:
+    def __init__(self, directory_path = None):
+        if directory_path and directory_path.endswith('/') == False:
             directory_path = directory_path + '/'
         self.__directory_path = directory_path
         self.__used_data_types = set()
@@ -97,6 +97,10 @@ class ProcessCollection:
         return data
 
     def set_directory_path(self, directory_path):
+        if directory_path and directory_path.endswith('/') == False:
+            directory_path = directory_path + '/'
+        else:
+            return
         self.__directory_path = directory_path
     
     def get_directory_path(self):

@@ -1,4 +1,3 @@
-import json
 from openpyxl import Workbook
 
 class Spreadsheet:
