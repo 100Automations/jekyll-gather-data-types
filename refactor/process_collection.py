@@ -1,7 +1,6 @@
 import os
 import yaml
 import marshal
-import sys
 import json
 from process_dictionary import ProcessDictionary
 
@@ -12,7 +11,7 @@ class ProcessCollection:
         self.__directory_path = directory_path
         self.__used_data_types = set()
         self.__nested_dictionary = dict()
-        self.__data_types_JSON = {}
+        self.__data_types_JSON = dict()
 
     def gather_used_types(self):
         pd = ProcessDictionary()
@@ -36,9 +35,9 @@ class ProcessCollection:
         pd.set_nested_key_dict(self.__nested_dictionary)
         directory = r'' + self.__directory_path
 
-        self.__data_types_JSON['used_data_types'] = list(self.__used_data_types)
-        self.__data_types_JSON['unused_data_types'] = dict()
-        self.__data_types_JSON['missing_data_types'] = dict()
+        self.__data_types_JSON['Used Data Types'] = list(self.__used_data_types)
+        self.__data_types_JSON['Unused Data Types'] = dict()
+        self.__data_types_JSON['Missing Data Types'] = dict()
 
         for filename in os.listdir(directory):
             data = self.parse_collection_file(filename)
@@ -56,9 +55,9 @@ class ProcessCollection:
             unused_data_types = self.__used_data_types - pd.get_key_set()
 
             if unused_data_types:
-                self.__data_types_JSON['unused_data_types'][os.path.splitext(filename)[0]] = list(unused_data_types)
+                self.__data_types_JSON['Unused Data Types'][os.path.splitext(filename)[0]] = list(unused_data_types)
             if pd.get_missing_key_set():
-                self.__data_types_JSON['missing_data_types'][os.path.splitext(filename)[0]] = list(pd.get_missing_key_set())
+                self.__data_types_JSON['Missing Data Types'][os.path.splitext(filename)[0]] = list(pd.get_missing_key_set())
         
         return json.dumps(self.__data_types_JSON)
 
