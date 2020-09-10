@@ -13,6 +13,18 @@ class Spreadsheet:
             self.__file_name = file_name + '.xlsx'
     
     def json_to_spreadsheet(self,json_dictionary):
+        """
+        Converts JSON dictionary in to a .xlsx spreadsheet stored in __file_path with __file_name
+
+        Paramaters
+        ----------
+        json_dictionary: dictionary
+            JSON that has been converted to python dictionary
+
+        Returns
+        -------
+        Nothing
+        """
         save_path = self.__file_path + self.__file_name
 
         workbook = Workbook()

@@ -14,7 +14,7 @@ class ProcessDictionary:
         Paramaters
         ----------
         dictionary: dictionary 
-            processed and keys added to __key_set
+            this dictionary is processed and keys added to __key_set
 
         prefix: string 
             used to track parent keys deliminated by commas during recursive calls
@@ -69,6 +69,28 @@ class ProcessDictionary:
         return nested_dictionary
     
     def __gather_missing_keys(self, dictionary, prefix, k, v):
+        """
+        Recursively accumulates a set of all nested data types present in __nested_key_dict
+        but not present in dictionary.
+
+        Paramaters
+        ----------
+        dictionary: dictionary 
+            this dictionary contains data types and values used by file currently being processed
+
+        prefix: string 
+            used to track parent keys deliminated by commas during recursive calls
+        
+        k: string
+            key = data type
+
+        v: dictionary
+            value = dictionary containing more data type, dictionary pairs or empty dictionary
+
+        Returns
+        -------
+        Nothing
+        """
         prefix_list = (prefix + k).split(",")
 
         if(self.__nested_key_dict[prefix_list[0]]):
@@ -86,6 +108,21 @@ class ProcessDictionary:
                 self.__missing_key_set.add(prefix + k + ": " + key)
 
     def gather_unused_missing_keys(self, dictionary, prefix = ""):
+        """
+        gathers sets of all missing and unused data types
+
+        Paramaters
+        ----------
+        dictionary: dictionary 
+            this dictionary contains data types and values used by file currently being processed
+
+        prefix: string 
+            used to track parent keys deliminated by commas during recursive calls
+
+        Returns
+        -------
+        Nothing
+        """
         for k,v in dictionary.items():
             if(prefix):
                 self.__key_set.add(prefix + "," + k)

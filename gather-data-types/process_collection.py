@@ -14,6 +14,19 @@ class ProcessCollection:
         self.__data_types_JSON = dict()
 
     def gather_used_types(self):
+        """
+        Gathers all data types used in collection found in __directory_path
+        All used data types are stored in a set __used_data_types
+        Nested data types are stored in a nested dictionary __nested_dictionary
+
+        Paramaters
+        ----------
+        None
+
+        Returns
+        -------
+        Nothing
+        """
         pd = ProcessDictionary()
         directory = r'' + self.__directory_path
 
@@ -31,11 +44,27 @@ class ProcessCollection:
         self.__nested_dictionary = pd.generate_nested_dictionary()
     
     def gather_missing_unused_data_types(self):
+        """
+        Given __used_data_types and __nested_dictionary generate sets of unused and missing
+        data types in __directory_path. 
+        
+        Generates a JSON string of All Data Types, Unused Data Types, and Missing Data Types in collection.
+
+        Paramaters
+        ----------
+        None
+
+        Returns
+        -------
+        string:
+            Outputs JSON formatted string with
+            All Data Types, Unused Data Types, and Missing Data Types in collection.
+        """
         pd = ProcessDictionary()
         pd.set_nested_key_dict(self.__nested_dictionary)
         directory = r'' + self.__directory_path
 
-        self.__data_types_JSON['Used Data Types'] = list(self.__used_data_types)
+        self.__data_types_JSON['All Data Types'] = list(self.__used_data_types)
         self.__data_types_JSON['Unused Data Types'] = dict()
         self.__data_types_JSON['Missing Data Types'] = dict()
 
