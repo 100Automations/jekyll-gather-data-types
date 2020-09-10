@@ -4,31 +4,25 @@ from spreadsheet import Spreadsheet
 import argparse
 import json
 
-def main(flag, target_directory = None, output_directory = './', output_name = 'data-types'):
-    if flag == '-i' and target_directory:
-        if target_directory:
-            pc = ProcessCollection(target_directory)
-            pc.gather_used_types()
-            pc.export_marshal_data()
-        else:
-            return None
-    elif flag == '-j':
-        pc = ProcessCollection()
-        pc.import_marshal_data()
+def gather_collection_data_types(target_directory):
+    pc = ProcessCollection(target_directory)
+    pc.gather_used_types()
+    pc.export_marshal_data()
 
-        return json.loads(pc.gather_missing_unused_data_types())
-    elif flag == '-x':
-        pc = ProcessCollection()
-        pc.import_marshal_data()
+def json_data_types_report():
+    pc = ProcessCollection()
+    pc.import_marshal_data()
 
-        json_dict = json.loads(pc.gather_missing_unused_data_types())
+    return json.loads(pc.gather_missing_unused_data_types())
 
-        spreadsheet = Spreadsheet()
-        spreadsheet.json_to_spreadsheet(json_dict)
+def spreadsheet_data_types_report(output_directory = './', output_name = 'data-types'):
+    pc = ProcessCollection()
+    pc.import_marshal_data()
 
-        return None
-    else:
-        return None
+    json_dict = json.loads(pc.gather_missing_unused_data_types())
+
+    spreadsheet = Spreadsheet(output_directory, output_name)
+    spreadsheet.json_to_spreadsheet(json_dict)
 
 if __name__ == '__main__':
     argumentParser = argparse.ArgumentParser(description='Generate spreadsheet or json of data types used and missing from jekyll collection')
@@ -64,15 +58,8 @@ if __name__ == '__main__':
     args = argumentParser.parse_args()
 
     if args.i:
-        flag = '-i'
+        gather_collection_data_types(args.i)
     elif args.j:
-        flag = '-j'
+        print(json_data_types_report())
     elif args.x:
-        flag = '-x'
-    else:
-        flag = None
-
-    json_str = main(flag, args.i, args.d, args.o)
-
-    if json_str:
-        print(json_str)
+        spreadsheet_data_types_report(args.d, args.o)
