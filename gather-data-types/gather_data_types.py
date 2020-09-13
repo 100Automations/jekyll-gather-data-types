@@ -22,7 +22,7 @@ def gather_collection_data_types(target_directory):
     pc.gather_used_types()
     pc.export_marshal_data()
 
-def json_data_types_report():
+def data_types_report(is_spreadsheet = False, output_directory = './', output_name = 'data-types'):
     """
     Uses data type information stored in ./dataTypes.marshal to generate a JSON report of
     All Data Types, Unused Data Types, and Missing Data Types in collection.
@@ -36,40 +36,41 @@ def json_data_types_report():
     string:
         JSON string of All Data Types, Unused Data Types, and Missing Data Types in collection.
     """
-    pc = ProcessCollection()
-    pc.import_marshal_data()
+    if not output_directory:
+        output_directory = './'
+    
+    if not output_name:
+        output_name = 'data-types'
 
-    return json.loads(pc.gather_missing_unused_data_types())
-
-def spreadsheet_data_types_report(output_directory = './', output_name = 'data-types'):
-    """
-    Uses data type information stored in ./dataTypes.marshal to generate a .xlsx spreadsheet report of
-    All Data Types, Unused Data Types, and Missing Data Types in collection.
-
-    Paramaters
-    ----------
-    output_directory: string
-        path to directory where .xlsx file will be output
-
-    output_name
-
-    Returns: string
-        name to give .xlsx file to be output in output_directory
-        
-    -------
-    Nothing
-    """
     pc = ProcessCollection()
     pc.import_marshal_data()
 
     json_dict = json.loads(pc.gather_missing_unused_data_types())
 
-    spreadsheet = Spreadsheet(output_directory, output_name)
-    spreadsheet.json_to_spreadsheet(json_dict)
+    if is_spreadsheet:
+        spreadsheet = Spreadsheet(output_directory, output_name)
+        spreadsheet.json_to_spreadsheet(json_dict)
+    
+    return json_dict
 
-def validate_through_template(target_directory):
+def validate_through_template_report(target_directory, 
+                                     is_spreadsheet = False, output_directory = './', 
+                                     output_name = 'template-data-types'):
+
+    if not output_directory:
+        output_directory = './'
+    
+    if not output_name:
+        output_name = 'template-data-types'
+
     pc = ProcessCollection(target_directory)
-    print(pc.gather_important_missing_untracked_data_types("./template.md"))
+    json_dict = json.loads(pc.gather_important_missing_untracked_data_types("./template.md"))
+
+    if is_spreadsheet:
+        spreadsheet = Spreadsheet(output_directory, output_name)
+        spreadsheet.json_to_spreadsheet(json_dict)
+    
+    return json_dict
 
 if __name__ == '__main__':
     argumentParser = argparse.ArgumentParser(description='Generate spreadsheet or json of data types used and missing from jekyll collection')
@@ -81,15 +82,13 @@ if __name__ == '__main__':
                                 metavar='output_directory',
                                 type=str,
                                 nargs='?',
-                                help='Path to output',
-                                default='./')
+                                help='Path to output')
 
     argumentParser.add_argument('-o',
                                 metavar='output_name',
                                 type=str,
                                 nargs='?',
-                                help='name for spreadsheetfile -> [output_name].xlsx',
-                                default='data-types')
+                                help='name for spreadsheetfile -> [output_name].xlsx')
     
     argumentParser.add_argument('-i',
                             metavar='target_directory',
@@ -111,11 +110,20 @@ if __name__ == '__main__':
 
     args = argumentParser.parse_args()
 
+    is_spreadsheet = True if args.x else False
+    is_json = True if args.j else False
+
     if args.i:
         gather_collection_data_types(args.i)
-    elif args.j:
-        print(json_data_types_report())
-    elif args.x:
-        spreadsheet_data_types_report(args.d, args.o)
     elif args.t:
-        validate_through_template(args.t)
+        json_dict = validate_through_template_report(args.t, args.x, args.d, args.o)
+
+        if not args.x or args.j:
+            print(json_dict)
+    elif args.j or args.x:
+        json_dict = data_types_report(is_spreadsheet, args.d, args.o)
+        
+        if not args.x or args.j:
+            print(json_dict)
+    else:
+        print("Missing flag: Use -h flag for help")

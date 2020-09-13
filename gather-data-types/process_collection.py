@@ -123,6 +123,7 @@ class ProcessCollection:
             if important_missing_data_types:
                 self.__data_types_JSON['Missing Important Data Types'][os.path.splitext(filename)[0]] = list(important_missing_data_types)
             self.__data_types_JSON['Untracked Data Types'] = list(untracked_key_set)
+            self.__data_types_JSON['All Template Data Types'] = list(template_key_set)
         
         return json.dumps(self.__data_types_JSON)
 
