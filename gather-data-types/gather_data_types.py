@@ -67,6 +67,10 @@ def spreadsheet_data_types_report(output_directory = './', output_name = 'data-t
     spreadsheet = Spreadsheet(output_directory, output_name)
     spreadsheet.json_to_spreadsheet(json_dict)
 
+def validate_through_template(target_directory):
+    pc = ProcessCollection(target_directory)
+    print(pc.gather_important_missing_untracked_data_types("./template.md"))
+
 if __name__ == '__main__':
     argumentParser = argparse.ArgumentParser(description='Generate spreadsheet or json of data types used and missing from jekyll collection')
     argumentParser.add_argument('-x',
@@ -98,6 +102,13 @@ if __name__ == '__main__':
                                 action='store_true',
                                 help='Enables JSON output')
 
+    argumentParser.add_argument('-t',
+                            metavar='target_directory',
+                            type=str,
+                            nargs='?',
+                            help='directory of jekyll collection to be parsed and compared to template',
+                            default=None)
+
     args = argumentParser.parse_args()
 
     if args.i:
@@ -106,3 +117,5 @@ if __name__ == '__main__':
         print(json_data_types_report())
     elif args.x:
         spreadsheet_data_types_report(args.d, args.o)
+    elif args.t:
+        validate_through_template(args.t)

@@ -1,3 +1,4 @@
 *.marshal
 *.xlsx
+template.md
 __pycache__/

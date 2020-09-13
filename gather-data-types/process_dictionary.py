@@ -3,7 +3,23 @@ class ProcessDictionary:
         self.__key_set = set()
         self.__missing_key_set = set()
         self.__nested_key_dict = dict()
+        self.__important_key_set = set()
+        self.__ignored_key_set = set()
     
+    def gather_important_ignored_dictionary_keys(self, dictionary, prefix = ""):
+        for k,v in dictionary.items():
+
+                if type(v) is dict:
+                    self.gather_important_ignored_dictionary_keys(v, prefix + "," + k if prefix else k)
+                
+                elif type(v) is list:
+                    for item in v:
+                        if type(item) is dict:
+                            self.gather_important_ignored_dictionary_keys(item, prefix + "," + k if prefix else k)
+                        else:
+                            self.__important_ignored_key_set_add(prefix, k, v)
+                else:
+                    self.__important_ignored_key_set_add(prefix, k, v)
     
     def gather_dictionary_keys(self, dictionary, prefix = ""):
         """
@@ -24,18 +40,18 @@ class ProcessDictionary:
         Nothing
         """
         for k,v in dictionary.items():
-                if(prefix):
-                    self.__key_set.add(prefix + "," + k)
-                else:
-                    self.__key_set.add(k)
 
                 if type(v) is dict:
                     self.gather_dictionary_keys(v, prefix + "," + k if prefix else k)
                 
-                if type(v) is list:
+                elif type(v) is list:
                     for item in v:
                         if type(item) is dict:
                             self.gather_dictionary_keys(item, prefix + "," + k if prefix else k)
+                        else:
+                            self.__key_set_add(prefix, k)
+                else:
+                    self.__key_set_add(prefix, k)
 
     def generate_nested_dictionary(self):
         """
@@ -138,11 +154,42 @@ class ProcessDictionary:
                         self.__gather_missing_keys(item, prefix, k, v)
                         self.gather_unused_missing_keys(item, prefix + "," + k if prefix else k)
     
+    def __key_set_add(self, prefix = "", k = ""):
+        if(prefix):
+            self.__key_set.add(prefix + "," + k)
+        else:
+            self.__key_set.add(k)
+    
+    def __important_ignored_key_set_add(self, prefix = "", k = "", v = ""):
+        if v.lower() == "important":
+            if(prefix):
+                self.__important_key_set.add(prefix + "," + k)
+            else:
+                self.__important_key_set.add(k)
+        
+        if v.lower() == "ignore":
+            if(prefix):
+                self.__ignored_key_set.add(prefix + "," + k)
+            else:
+                self.__ignored_key_set.add(k)
+    
     def get_key_set(self):
         return self.__key_set.copy()
     
     def set_key_set(self, key_set):
         self.__key_set = key_set
+
+    def get_important_key_set(self):
+        return self.__important_key_set.copy()
+    
+    def set_important_key_set(self, important_key_set):
+        self.__important_key_set = important_key_set
+    
+    def get_ignored_key_set(self):
+        return self.__ignored_key_set.copy()
+    
+    def set_ignored_key_set(self, ignored_key_set):
+        self.__ignored_key_set = ignored_key_set
     
     def set_missing_key_set(self, missing_key_set):
         self.__missing_key_set = missing_key_set
