@@ -31,7 +31,7 @@ class ProcessCollection:
         directory = r'' + self.__directory_path
 
         for filename in os.listdir(directory):
-            data = self.parse_collection_file(filename)
+            data = self.parse_collection_file(self.__directory_path + filename)
 
             if not data:
                 continue
@@ -69,7 +69,7 @@ class ProcessCollection:
         self.__data_types_JSON['Missing Data Types'] = dict()
 
         for filename in os.listdir(directory):
-            data = self.parse_collection_file(filename)
+            data = self.parse_collection_file(self.__directory_path + filename)
 
             if not data:
                 continue
@@ -90,6 +90,43 @@ class ProcessCollection:
         
         return json.dumps(self.__data_types_JSON)
 
+    def gather_important_missing_untracked_data_types(self, file_path):
+        pd = ProcessDictionary()
+        directory = r'' + self.__directory_path
+
+        data = self.parse_collection_file(file_path)
+
+        for dictionary in data:
+            if dictionary:
+                pd.gather_important_ignored_dictionary_keys(dictionary)
+
+        ignored_key_set = pd.get_ignored_key_set()
+        important_key_set = pd.get_important_key_set()
+        template_key_set = ignored_key_set.union(important_key_set)
+        untracked_key_set = set()
+
+        self.__data_types_JSON['Missing Important Data Types'] = dict()
+
+        for filename in os.listdir(directory):
+            data = self.parse_collection_file(self.__directory_path + filename)
+
+            if not data:
+                continue
+
+            for dictionary in data:
+                if(dictionary):
+                    pd.gather_dictionary_keys(dictionary)
+
+            important_missing_data_types = important_key_set - pd.get_key_set()
+            untracked_key_set.update(pd.get_key_set() - template_key_set)
+
+            if important_missing_data_types:
+                self.__data_types_JSON['Missing Important Data Types'][os.path.splitext(filename)[0]] = list(important_missing_data_types)
+            self.__data_types_JSON['Untracked Data Types'] = list(untracked_key_set)
+            self.__data_types_JSON['All Template Data Types'] = list(template_key_set)
+        
+        return json.dumps(self.__data_types_JSON)
+
     def export_marshal_data(self, file_path = "./dataTypes.marshal"):
         storage_file = open(file_path, 'wb')
         marshal.dump(self.__directory_path, storage_file)
@@ -104,13 +141,13 @@ class ProcessCollection:
         self.__nested_dictionary = marshal.load(storage_file)
         storage_file.close()
     
-    def parse_collection_file(self, filename):
-        if filename.endswith(".md") == False:
+    def parse_collection_file(self, file_path):
+        if file_path.endswith(".md") == False:
             return None
         try:
-            md_file = open(self.__directory_path + filename, 'r')
+            md_file = open(file_path, 'r')
         except:
-            print("Failed to open " + filename + "\n")
+            print("Failed to open " + file_path + "\n")
             return None
         try:
             data = list()
@@ -118,7 +155,7 @@ class ProcessCollection:
             for dictionary in data_object:
                 data.append(dictionary)
         except:
-            print("yaml failed to parse " + filename + "\n")
+            print("yaml failed to parse " + file_path + "\n")
             md_file.close()
             return None
         
