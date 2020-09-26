@@ -94,7 +94,7 @@ if __name__ == '__main__':
                             metavar='target_directory',
                             type=str,
                             nargs='?',
-                            help='directory of jekyll collection to be parsed',
+                            help='directory of jekyll collection to be parsed to generate set of used data types',
                             default=None)
 
     argumentParser.add_argument('-j', 
