@@ -161,11 +161,12 @@ class ProcessDictionary:
             self.__key_set.add(k)
     
     def __important_ignored_key_set_add(self, prefix = "", k = "", v = ""):
-        if v.lower() == "important":
+        if not v:
             if(prefix):
                 self.__important_key_set.add(prefix + "," + k)
             else:
                 self.__important_key_set.add(k)
+            return
         
         if v.lower() == "ignore":
             if(prefix):
@@ -195,10 +196,10 @@ class ProcessDictionary:
         self.__missing_key_set = missing_key_set
     
     def get_missing_key_set(self):
-        return self.__missing_key_set
+        return self.__missing_key_set.copy()
 
     def get_nested_key_dict(self):
-        return self.__nested_key_dict
+        return self.__nested_key_dict.copy()
     
     def set_nested_key_dict(self, nested_key_dict):
         self.__nested_key_dict = nested_key_dict
